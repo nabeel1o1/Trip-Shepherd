@@ -16,7 +16,6 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -35,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tripshepherd.ui.components.CCPUtils.Companion.getEmojiFlag
+import com.example.tripshepherd.ccpUtils.Country
+
 
 @Composable
 internal fun CountryHeaderDialog(
@@ -169,13 +170,13 @@ internal fun CountryUI(
     ) {
 
         val countryString = if (showCountryFlag && showCountryIso) {
-            (getEmojiFlag(country.countryIso)) + "  " + country.countryName + "  (" + country.countryIso + ")"
+            (getEmojiFlag(country.code)) + "  " + country.name + "  (" + country.dialCode + ")"
         } else if (showCountryFlag) {
-            (getEmojiFlag(country.countryIso)) + "  " + country.countryName
+            (getEmojiFlag(country.code)) + "  " + country.name
         } else if (showCountryIso) {
-            country.countryName + "  (" + country.countryIso + ")"
+            country.name + "  (" + country.name + ")"
         } else {
-            country.countryName
+            country.name
         }
 
         Text(
@@ -189,7 +190,7 @@ internal fun CountryUI(
 
         if (showCountryCode) {
             Text(
-                text = country.countryCode, style = countryTextStyle
+                text = country.code, style = countryTextStyle
             )
         }
 
@@ -219,7 +220,7 @@ internal fun CountryView(
 
         if (showFlag) {
             Text(
-                text = getEmojiFlag(country.countryIso),
+                text = getEmojiFlag(country.dialCode),
                 modifier = Modifier.padding(start = 5.dp, end = 10.dp),
                 style = textStyle
             )
@@ -227,7 +228,7 @@ internal fun CountryView(
 
         if (showCountryName) {
             Text(
-                text = country.countryName,
+                text = country.name,
                 modifier = Modifier.padding(end = 10.dp),
                 style = textStyle
             )
@@ -235,7 +236,7 @@ internal fun CountryView(
 
         if (showCountryIso) {
             Text(
-                text = "(" + country.countryIso + ")",
+                text = "(" + country.dialCode + ")",
                 modifier = Modifier.padding(end = 20.dp),
                 style = textStyle
             )
@@ -248,7 +249,7 @@ internal fun CountryView(
 
         if (showCountryCode) {
             Text(
-                text = country.countryCode,
+                text = country.code,
                 modifier = Modifier.padding(end = 5.dp),
                 style = textStyle
             )

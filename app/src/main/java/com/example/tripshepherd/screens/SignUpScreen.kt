@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tripshepherd.R
+import com.example.tripshepherd.ccpUtils.countryList
 import com.example.tripshepherd.ui.components.Country
 import com.example.tripshepherd.ui.components.CountryPickerBottomSheet
 import com.example.tripshepherd.ui.components.HeadingWithTitle
@@ -230,7 +232,7 @@ fun MobileNumberInputField() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.9f),
-                listOfCountry = Country.getAllCountries(),
+                listOfCountry = countryList(LocalContext.current),
                 onDismissRequest = {
                     showBottomSheet = false
                 },

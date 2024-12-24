@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import com.example.tripshepherd.ccpUtils.Country
+import com.example.tripshepherd.ccpUtils.searchCountry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +51,7 @@ fun CountryPickerBottomSheet(
             if (value.isEmpty()) {
                 listOfCountry
             } else {
-                Country.searchCountry(value, listOfCountry)
+                listOfCountry.searchCountry(value)
             }
         }
 
@@ -96,7 +98,7 @@ fun CountryPickerBottomSheet(
 
 
                 LazyColumn {
-                    items(filteredCountries, key = { it.countryName }) { countryItem ->
+                    items(filteredCountries, key = { it.name }) { countryItem ->
                         CountryUI(
                             country = countryItem,
                             onCountryClicked = { onItemClicked(countryItem) },
