@@ -1,5 +1,6 @@
 package com.example.tripshepherd.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Clear
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -111,6 +114,7 @@ internal fun CountrySearch(
     TextField(modifier = Modifier
         .fillMaxWidth()
         .focusRequester(requester)
+        .background(color = Color(0xFFEFEFEF), shape = RoundedCornerShape(9.dp))
         .onFocusChanged { onFocusChanged(it) },
         value = value,
         onValueChange = onValueChange,
@@ -148,7 +152,7 @@ internal fun CountryUI(
     onCountryClicked: () -> Unit,
     showCountryFlag: Boolean = true,
     showCountryIso: Boolean = false,
-    showCountryCode: Boolean = true,
+    showCountryCode: Boolean = false,
     countryTextStyle: TextStyle,
     itemPadding: Int = 10
 

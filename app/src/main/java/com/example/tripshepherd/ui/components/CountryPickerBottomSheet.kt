@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -37,7 +36,7 @@ fun CountryPickerBottomSheet(
     listOfCountry: List<Country>,
     pickerCustomization: PickerCustomization = PickerCustomization(),
     itemPadding: Int = 10,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = Color.White,
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
@@ -59,6 +58,7 @@ fun CountryPickerBottomSheet(
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
         sheetState = sheetState,
+        containerColor = Color.White,
         dragHandle = {
             BottomSheetDefaults.DragHandle(
                 width = 90.dp,
@@ -71,7 +71,9 @@ fun CountryPickerBottomSheet(
             color = backgroundColor, modifier = modifier
         ) {
 
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)) {
 
                 Spacer(modifier = Modifier.height(itemPadding.dp))
 
@@ -95,7 +97,6 @@ fun CountryPickerBottomSheet(
 
                 LazyColumn {
                     items(filteredCountries, key = { it.countryName }) { countryItem ->
-                        HorizontalDivider(color = pickerCustomization.dividerColor)
                         CountryUI(
                             country = countryItem,
                             onCountryClicked = { onItemClicked(countryItem) },
