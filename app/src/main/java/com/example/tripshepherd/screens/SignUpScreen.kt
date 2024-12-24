@@ -151,7 +151,7 @@ fun SignUpScreen() {
 
 @Composable
 fun MobileNumberInputField() {
-    val mobileNumber = remember { mutableStateOf("") }
+    var mobileNumber by remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     Box(
@@ -202,8 +202,8 @@ fun MobileNumberInputField() {
             }
 
             TextField(
-                value = mobileNumber.value,
-                onValueChange = { mobileNumber.value = it },
+                value = mobileNumber,
+                onValueChange = { mobileNumber = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(

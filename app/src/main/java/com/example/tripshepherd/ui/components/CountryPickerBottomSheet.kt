@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +59,13 @@ fun CountryPickerBottomSheet(
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
         sheetState = sheetState,
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                width = 90.dp,
+                color = Color(0xFF121212)
+
+            )
+        }
     ) {
         Surface(
             color = backgroundColor, modifier = modifier
