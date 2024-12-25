@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "625644857522",
+    "project_id": "tripshepherd-a24e2",
+    "storage_bucket": "tripshepherd-a24e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625644857522:android:c403c6f90a6dcbc29201ab",
+        "android_client_info": {
+          "package_name": "com.example.tripshepherd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnFIrleGLsJXbsYsUaVI-G23P0za6Z2yk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
