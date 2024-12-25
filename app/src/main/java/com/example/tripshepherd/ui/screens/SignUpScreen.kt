@@ -2,6 +2,8 @@ package com.example.tripshepherd.ui.screens
 
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,16 +62,27 @@ import com.example.tripshepherd.utils.getFlags
 import com.example.tripshepherd.ui.components.CountryPickerBottomSheet
 import com.example.tripshepherd.ui.components.HeadingWithTitle
 import com.example.tripshepherd.ui.components.LogoWithText
-import com.example.tripshepherd.utils.VerificationState
+import com.example.tripshepherd.utils.SignInState
 import com.example.tripshepherd.viewmodel.SignUpViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpScreen(currentActivity: MainActivity,
-                 onNavigateToOtpVerification: (verificationId: String,
-                                               token: PhoneAuthProvider.ForceResendingToken,
-                                               phoneNo: String) -> Unit) {
+fun SignUpScreen(
+    currentActivity: MainActivity,
+    onNavigateToOtpVerification: (
+        verificationId: String,
+        token: PhoneAuthProvider.ForceResendingToken,
+        phoneNo: String
+    ) -> Unit,
+    onNavigateToAccountCreated: (userInfo: FirebaseUser) -> Unit,
+    onBackPress: () -> Unit
+) {
+
+    val context = LocalContext.current
 
     val viewModel: SignUpViewModel = hiltViewModel()
 
@@ -87,27 +100,57 @@ fun SignUpScreen(currentActivity: MainActivity,
         mutableStateOf(Country(name = "Pakistan", dialCode = "+92", code = "pk"))
     }
 
-    val verificationState by viewModel.verificationState.collectAsState()
+    val signInState by viewModel.signInState.collectAsState()
 
-    when (verificationState) {
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account?.idToken?.let { idToken ->
+                    viewModel.signInWithGoogle(idToken)
+                }
+            } catch (e: ApiException) {
+                scope.launch {
+                    Log.d("TAG_TS", "Google Sign-In failed: ${e.localizedMessage}")
+                    Toast.makeText(
+                        context,
+                        "Google Sign-In failed: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    )
 
-        is VerificationState.Error -> {
-            val errorMessage = (verificationState as VerificationState.Error).message
+    when (signInState) {
+
+        is SignInState.Error -> {
+            val errorMessage = (signInState as SignInState.Error).message
             Log.d("TAG_TS", "SignUpScreen: $errorMessage")
             LaunchedEffect(Unit) {
                 Toast.makeText(currentActivity, errorMessage, Toast.LENGTH_LONG).show()
             }
         }
 
-        is VerificationState.CodeSent -> {
+        is SignInState.CodeSent -> {
             LaunchedEffect(Unit) {
-                val verificationId = (verificationState as VerificationState.CodeSent).verificationId
-                val phoneNo = (verificationState as VerificationState.CodeSent).phoneNo
-                val resendToken = (verificationState as VerificationState.CodeSent).token
+                val verificationId = (signInState as SignInState.CodeSent).verificationId
+                val phoneNo = (signInState as SignInState.CodeSent).phoneNo
+                val resendToken = (signInState as SignInState.CodeSent).token
                 Log.d("TAG_TS", "verificationId: $verificationId")
                 onNavigateToOtpVerification(verificationId, resendToken, phoneNo)
             }
         }
+
+        is SignInState.GoogleSignInSuccess -> {
+            LaunchedEffect(Unit) {
+                val userInfo = (signInState as SignInState.GoogleSignInSuccess).user
+                onNavigateToAccountCreated(userInfo!!)
+            }
+        }
+
         else -> {}
     }
 
@@ -118,7 +161,7 @@ fun SignUpScreen(currentActivity: MainActivity,
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { onBackPress()}) {
             Image(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back button"
@@ -148,32 +191,40 @@ fun SignUpScreen(currentActivity: MainActivity,
                 onClick = {
                     keyboardController?.hide()
                     if (mobileNumber.isNotEmpty()) {
-                        if (validatePhoneNumber(countryCode = selectedCountry.dialCode,
-                                number = mobileNumber)) {
+                        if (validatePhoneNumber(
+                                countryCode = selectedCountry.dialCode,
+                                number = mobileNumber
+                            )
+                        ) {
                             viewModel.startPhoneVerification(
                                 phoneNumber = selectedCountry.dialCode + mobileNumber,
                                 currentActivity
                             )
                         } else {
                             scope.launch {
-                                Toast.makeText(currentActivity, "Enter a valid phone number", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    currentActivity,
+                                    "Enter a valid phone number",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
 
                     } else {
                         scope.launch {
-                            Toast.makeText(currentActivity, "Enter phone number", Toast.LENGTH_LONG).show()
+                            Toast.makeText(currentActivity, "Enter phone number", Toast.LENGTH_LONG)
+                                .show()
                         }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = verificationState != VerificationState.Loading,
+                enabled = signInState != SignInState.Loading,
                 shape = RoundedCornerShape(9.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ) {
-                if (verificationState == VerificationState.Loading) {
+                if (signInState == SignInState.Loading) {
                     CircularProgressIndicator(
                         color = Color.White,
                         modifier = Modifier.size(24.dp)
@@ -211,12 +262,15 @@ fun SignUpScreen(currentActivity: MainActivity,
             Spacer(modifier = Modifier.height(40.dp))
 
             Button(
-                onClick = { /* Handle Google Sign-In */ },
+                onClick = {
+                    val signInIntent = viewModel.getGoogleSignInIntent()
+                    googleSignInLauncher.launch(signInIntent)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(9.dp),
-                enabled = verificationState != VerificationState.Loading,
+                enabled = signInState != SignInState.Loading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFEFEFEF)
                 )

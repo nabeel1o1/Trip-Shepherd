@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -60,11 +60,13 @@ fun OtpInputField(
             Row(horizontalArrangement = Arrangement.spacedBy(1.dp,
                 alignment = Alignment.CenterHorizontally)) {
                 repeat(otpLength) { index ->
-                    CharacterContainer(
-                        index = index,
-                        text = otpText,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(modifier = Modifier.weight(1f).wrapContentSize().padding(2.dp)
+                        .aspectRatio(1f)) {
+                        CharacterContainer(
+                            index = index,
+                            text = otpText,
+                        )
+                    }
                 }
             }
         }
@@ -85,8 +87,7 @@ internal fun CharacterContainer(
 
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier
-            .width(50.dp)
-            .height(50.dp)
+            .wrapContentSize()
             .border(
                 width = when {
                     character.isNotEmpty() -> 1.8.dp
@@ -104,7 +105,7 @@ internal fun CharacterContainer(
                     character.isNotEmpty() -> Color.White
                     else -> Color(0xFFEFEFEF)
                 }
-            ).padding(2.dp)) {
+            )) {
         Text(
             modifier = Modifier.fillMaxSize().wrapContentSize(),
             text = character,

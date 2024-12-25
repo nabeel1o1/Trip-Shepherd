@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -49,7 +48,7 @@ import com.example.tripshepherd.R
 import com.example.tripshepherd.ui.components.HeadingWithTitle
 import com.example.tripshepherd.ui.components.LogoWithText
 import com.example.tripshepherd.ui.components.OtpInputField
-import com.example.tripshepherd.utils.VerificationState
+import com.example.tripshepherd.utils.SignInState
 import com.example.tripshepherd.viewmodel.OtpVerificationViewModel
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 import kotlinx.coroutines.delay
@@ -66,7 +65,7 @@ fun OtpVerificationScreen(
 
     val viewModel: OtpVerificationViewModel = hiltViewModel()
 
-    val verificationState by viewModel.otpVerificationState.collectAsState()
+    val verificationState by viewModel.signInState.collectAsState()
 
     var mVerificationId by remember { mutableStateOf(verificationId) }
 
@@ -74,24 +73,24 @@ fun OtpVerificationScreen(
 
     when (verificationState) {
 
-        is VerificationState.VerificationCompleted -> {
+        is SignInState.VerificationCompleted -> {
             LaunchedEffect(Unit) {
                 onOtpVerificationSuccess()
             }
         }
 
-        is VerificationState.Error -> {
-            val errorMessage = (verificationState as VerificationState.Error).message
+        is SignInState.Error -> {
+            val errorMessage = (verificationState as SignInState.Error).message
             Log.d("TAG_TS", "SignUpScreen: $errorMessage")
             LaunchedEffect(Unit) {
                 Toast.makeText(currentActivity, errorMessage, Toast.LENGTH_LONG).show()
             }
         }
 
-        is VerificationState.CodeSent -> {
+        is SignInState.CodeSent -> {
             LaunchedEffect(Unit) {
-                mVerificationId = (verificationState as VerificationState.CodeSent).verificationId
-                resendToken = (verificationState as VerificationState.CodeSent).token
+                mVerificationId = (verificationState as SignInState.CodeSent).verificationId
+                resendToken = (verificationState as SignInState.CodeSent).token
                 Log.d("TAG_TS", "verificationId: $mVerificationId")
             }
         }
@@ -123,7 +122,7 @@ fun OtpVerificationScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back button"
@@ -182,11 +181,11 @@ fun OtpVerificationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = verificationState != VerificationState.Loading,
+                enabled = verificationState != SignInState.Loading,
                 shape = RoundedCornerShape(9.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ) {
-                if (verificationState == VerificationState.Loading) {
+                if (verificationState == SignInState.Loading) {
                     CircularProgressIndicator(
                         color = Color.White,
                         modifier = Modifier.size(24.dp)

@@ -34,9 +34,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripshepherdTheme {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 30.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 30.dp)
+                ) {
                     App(this@MainActivity)
                 }
             }
@@ -49,10 +51,14 @@ class MainActivity : ComponentActivity() {
 
         NavHost(navController = navController, startDestination = "signup") {
             composable("signup") {
-                SignUpScreen(currentActivity) { verificationId, resendToken, phoneNo ->
+                SignUpScreen(currentActivity, { verificationId, resendToken, phoneNo ->
                     this@MainActivity.resendToken = resendToken
                     navController.navigate("otpVerification/$verificationId/$phoneNo")
-                }
+                }, { userInfo ->
+                    navController.navigate("accountCreated")
+                }, {
+                    finish()
+                })
             }
             composable("otpVerification/{verificationId}/{phoneNo}") {
                 navArgument(name = "verificationId") {
@@ -63,7 +69,8 @@ class MainActivity : ComponentActivity() {
                 }
                 val verificationId = it.arguments!!.getString("verificationId")
                 val phoneNo = it.arguments!!.getString("phoneNo")
-                OtpVerificationScreen(this@MainActivity, verificationId!!,
+                OtpVerificationScreen(
+                    this@MainActivity, verificationId!!,
                     resendToken!!, phoneNo!!) {
                     navController.navigate("userFullName")
                 }
