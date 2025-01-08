@@ -3,6 +3,7 @@ package com.example.tripshepherd.ui.screens
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,8 @@ fun OtpVerificationScreen(
     verificationId: String,
     resendingToken: ForceResendingToken,
     phoneNo: String,
-    onOtpVerificationSuccess: () -> Unit
+    onOtpVerificationSuccess: () -> Unit,
+    onBackPress : () -> Unit
 ) {
 
     val viewModel: OtpVerificationViewModel = hiltViewModel()
@@ -76,6 +78,7 @@ fun OtpVerificationScreen(
         is SignInState.VerificationCompleted -> {
             LaunchedEffect(Unit) {
                 onOtpVerificationSuccess()
+                viewModel.clearNavigationState()
             }
         }
 
@@ -92,6 +95,7 @@ fun OtpVerificationScreen(
                 mVerificationId = (verificationState as SignInState.CodeSent).verificationId
                 resendToken = (verificationState as SignInState.CodeSent).token
                 Log.d("TAG_TS", "verificationId: $mVerificationId")
+                viewModel.clearNavigationState()
             }
         }
 
@@ -122,7 +126,9 @@ fun OtpVerificationScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        IconButton(onClick = { }) {
+        IconButton(onClick = {
+            onBackPress()
+        }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back button"

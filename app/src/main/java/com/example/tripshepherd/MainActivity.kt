@@ -71,19 +71,26 @@ class MainActivity : ComponentActivity() {
                 val phoneNo = it.arguments!!.getString("phoneNo")
                 OtpVerificationScreen(
                     this@MainActivity, verificationId!!,
-                    resendToken!!, phoneNo!!) {
-                    navController.navigate("userFullName")
-                }
+                    resendToken!!, phoneNo!!, {
+                        navController.navigate("userFullName")
+                    },
+                    {
+                        navController.popBackStack()
+                    })
             }
             composable("userFullName") {
-                UserFullNameScreen {
+                UserFullNameScreen({
                     navController.navigate("userEmail")
-                }
+                }, {
+                    navController.popBackStack()
+                })
             }
             composable("userEmail") {
-                UserEmailScreen {
+                UserEmailScreen({
                     navController.navigate("accountCreated")
-                }
+                }, {
+                    navController.popBackStack()
+                })
             }
             composable("accountCreated") {
                 AccountCreatedScreen()

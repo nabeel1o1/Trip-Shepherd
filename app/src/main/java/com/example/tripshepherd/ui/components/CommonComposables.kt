@@ -4,12 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -72,6 +71,8 @@ fun TextFieldWithLabel(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
+            .height(55.dp)
+            .wrapContentSize()
     ) {
         val (label, textField) = createRefs()
 
@@ -82,7 +83,7 @@ fun TextFieldWithLabel(
             modifier = Modifier
                 .constrainAs(textField){}
                 .fillMaxWidth()
-                .height(50.dp)
+                .fillMaxHeight()
                 .border(1.dp, Color.Gray.copy(alpha = 0.5f), RoundedCornerShape(9.dp))
                 .padding(horizontal = 12.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -104,6 +105,7 @@ fun TextFieldWithLabel(
                 }
                 .background(Color.White)
                 .padding(horizontal = 5.dp)
+                .wrapContentSize()
         )
     }
 }

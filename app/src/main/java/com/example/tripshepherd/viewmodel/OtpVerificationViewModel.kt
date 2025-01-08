@@ -48,4 +48,8 @@ class OtpVerificationViewModel @Inject constructor(private val repository: AuthR
             })
     }
 
+    fun clearNavigationState() {
+        _signInState.value = SignInState.Idle
+    }
+
 }

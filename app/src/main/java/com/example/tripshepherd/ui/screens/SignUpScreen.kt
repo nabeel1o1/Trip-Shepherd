@@ -141,6 +141,7 @@ fun SignUpScreen(
                 val resendToken = (signInState as SignInState.CodeSent).token
                 Log.d("TAG_TS", "verificationId: $verificationId")
                 onNavigateToOtpVerification(verificationId, resendToken, phoneNo)
+                viewModel.clearNavigationState()
             }
         }
 
@@ -148,6 +149,7 @@ fun SignUpScreen(
             LaunchedEffect(Unit) {
                 val userInfo = (signInState as SignInState.GoogleSignInSuccess).user
                 onNavigateToAccountCreated(userInfo!!)
+                viewModel.clearNavigationState()
             }
         }
 

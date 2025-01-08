@@ -2,7 +2,6 @@ package com.example.tripshepherd.ui.screens
 
 import android.util.Patterns
 import android.widget.Toast
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +35,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun UserEmailScreen(
-    onNextClick : () -> Unit
+    onNextClick: () -> Unit,
+    onBackPress: () -> Unit
 ) {
     var userEmail by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
 
-    var contenxt = LocalContext.current
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -52,7 +51,7 @@ fun UserEmailScreen(
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { onBackPress() }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back button"
@@ -63,8 +62,10 @@ fun UserEmailScreen(
 
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
 
-            HeadingWithTitle(title = "What’s your email address?",
-                description = "Make sure your email is correct.")
+            HeadingWithTitle(
+                title = "What’s your email address?",
+                description = "Make sure your email is correct."
+            )
 
             Spacer(modifier = Modifier.height(50.dp))
 
@@ -76,14 +77,13 @@ fun UserEmailScreen(
 
             Button(
                 onClick = {
-                    if (userEmail.isNotEmpty())
-                    {
+                    if (userEmail.isNotEmpty()) {
                         if (Patterns.EMAIL_ADDRESS.matcher(userEmail).matches())
                             onNextClick()
-                        else
-                        {
+                        else {
                             scope.launch {
-                                Toast.makeText(contenxt, "Enter a valid email", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Enter a valid email", Toast.LENGTH_LONG)
+                                    .show()
                             }
                         }
                     }
@@ -98,9 +98,9 @@ fun UserEmailScreen(
                 Text(text = "Next", color = Color.White, fontSize = 16.sp)
             }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        LogoWithText()
+            LogoWithText()
+        }
     }
-}
 }

@@ -30,7 +30,8 @@ import com.example.tripshepherd.ui.components.TextFieldWithLabel
 
 @Composable
 fun UserFullNameScreen(
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    onBackPress: () -> Unit
 ) {
     var fullName by remember { mutableStateOf("") }
 
@@ -41,7 +42,7 @@ fun UserFullNameScreen(
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { onBackPress() }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back button"
@@ -78,10 +79,9 @@ fun UserFullNameScreen(
             ) {
                 Text(text = "Next", color = Color.White, fontSize = 16.sp)
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            LogoWithText()
         }
+        Spacer(modifier = Modifier.weight(1f))
+
+        LogoWithText()
     }
 }

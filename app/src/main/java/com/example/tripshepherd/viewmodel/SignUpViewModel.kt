@@ -49,4 +49,8 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     }
 
     fun getGoogleSignInIntent() = repository.getGoogleSignInIntent()
+
+    fun clearNavigationState() {
+        _signInState.value = SignInState.Idle
+    }
 }
